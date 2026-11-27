@@ -143,13 +143,13 @@ client.on("message", async (msg) => {
         msg.from,
         `${saudacao}! 👋\n\n` +
         `Seja bem-vindo(a) à Rodotur Turismo! 🚌\n\n` +
-        `🤖 Você está sendo atendido por um de nossos robôs. Para continuar, digite o número correspondente ao que deseja:\n\n` +
+        ` Para continuar, digite o número correspondente ao que deseja:\n\n` +
         `1 - Horários Rodoviários 🕛\n` +
-        `2 - Tarifas Rodoviárias 💲\n` +
-        `3 - Falar com atendente ☎️\n` +
+        `2 - Tarifas Rodoviárias  💲\n` +
+        `3 - Falar com atendente  ☎️\n` +
         `4 - Elogios ou Sugestões 😁\n` +
-        `5 - LGPD 📜\n` +
-        `6 - Reclamações 😡`
+        `5 - LGPD                 📜\n` +
+        `6 - Reclamações          😡`
       );
 
       return;
@@ -204,6 +204,35 @@ client.on("message", async (msg) => {
 
 
     // =====================================
+    // ESCOLHA DA LINHA - RECIFE X GOIANA
+    // =====================================
+    if (
+      estados.get(msg.from) === "escolher_linha" &&
+      ["1", "recife x goiana"].includes(dia)
+    ) {
+
+      await typing();
+
+      estados.set(msg.from, "escolher_dia_recife_goiana");
+
+      await client.sendMessage(
+        msg.from,
+        `🚌 Recife x Goiana 🚌\n\n` +
+        `Por favor, digite o número referente ao dia da semana no qual deseja ver os horários:\n\n` +
+        `1 - Segunda-Feira 📆\n` +
+        `2 - Terça à Quinta 📆\n` +
+        `3 - Sexta-Feira 📆\n` +
+        `4 - Sábado 📆\n` +
+        `5 - Domingo 📆\n\n` +
+        `0 - Menu Principal ↩️`
+      );
+
+      return;
+    }
+
+
+
+    // =====================================
     // NOVOS HORÁRIOS - RECIFE X GOIANA
     // =====================================
     if (estados.get(msg.from) === "escolher_dia_recife_goiana") {
@@ -219,13 +248,21 @@ client.on("message", async (msg) => {
       ) {
         chaveHorario = "terca_quinta";
       }
+      else if (["3", "sexta", "sexta-feira", "4", "sabado", "5", "domingo"].includes(dia)) {
+        await typing();
+
+        await client.sendMessage(
+          msg.from,
+          "Os horários para este dia ainda não estão disponíveis no sistema.\n\nDigite 0 para voltar ao menu principal."
+        );
+
+        return;
+      }
 
       // Busca os horários no arquivo horarios.js
       if (chaveHorario) {
 
         await typing();
-
-        estados.set(msg.from, "escolher_dia_recife_goiana");
 
         const horario = horarios.recife_goiana[chaveHorario];
 
@@ -239,8 +276,8 @@ client.on("message", async (msg) => {
           `📅 ${horario.titulo} 📅\n\n` +
           `Saindo Goiana    Saindo Recife\n\n` +
           `${tabela}\n\n` +
-          `📅 Caso queira ver outros dias da semana basta digitar o nome do dia ex: Segunda.\n` +
-          `Digite 0 para voltar ao menu principal.`
+          `📅 Caso queira ver outros dias da semana basta digitar o nome do dia ex: Segunda.\n\n` +
+          `0 - Menu Principal ↩️`
         );
 
         return;
@@ -359,38 +396,6 @@ client.on("message", async (msg) => {
     
     
     */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
